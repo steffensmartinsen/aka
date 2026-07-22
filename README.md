@@ -10,6 +10,13 @@ aka add l "ls -ltr" --description "list files, newest last"
 aka list
 ```
 
+Set up a new machine in one step by importing a profile you exported elsewhere:
+
+```bash
+aka export my-aliases.json     # on your old machine
+aka import my-aliases.json     # on the new one
+```
+
 ## Install
 
 ### Prebuilt binary (recommended)
@@ -61,7 +68,7 @@ The `[ -f ... ] &&` guard means nothing breaks if the file doesn't exist yet.
 ### Add an alias
 
 ```bash
-aka add <name> "<command>" [--description <text>]
+aka add <name> <command> [--description <text>]
 ```
 
 ```bash
@@ -103,6 +110,36 @@ Rewrite `aliases.sh` from the current store without changing anything. Rarely ne
 aka generate
 ```
 
+### Export a profile
+
+Dump the current aliases to a portable JSON file — useful for backing them up, committing to a dotfiles repo, or moving to another machine.
+
+```bash
+aka export <file>
+```
+
+```bash
+aka export my-aliases.json
+```
+
+### Import a profile
+
+Merge aliases from a profile file into the current store.
+
+```bash
+aka import <file>              # merge; abort if any name already exists
+aka import <file> --overwrite  # on conflict, the imported alias wins
+aka import <file> --keep       # on conflict, the existing alias wins
+```
+
+By default, if an incoming alias name already exists locally, the import **aborts** and lists the conflicts — nothing is overwritten without you choosing. Use `--overwrite` or `--keep` to resolve conflicts in either direction. Non-conflicting aliases always import cleanly.
+
+After a successful import, reload your current shell to use the new aliases:
+
+```bash
+source ~/.bashrc
+```
+
 ## How it works
 
 `aka` stores your aliases as JSON at `~/.config/aka/aliases.json` and generates a bash script alongside it:
@@ -114,6 +151,8 @@ aka generate
 ```
 
 Every `add` or `remove` rewrites `aliases.sh`. Your shell reads that generated file, so your aliases live in one place and stay in sync.
+
+A **profile** (from `aka export`) is just a copy of this store's JSON structure, so it's portable and safe to commit to a dotfiles repo. `aka import` reads one back in.
 
 ## Uninstall
 
