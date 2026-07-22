@@ -27,8 +27,8 @@ main() {
     # Temp dir with guaranteed cleanup
     local TMP
     TMP="$(mktemp -d)"
-    trap 'rm -rf "$TMP"' EXIT
-
+    trap 'rm -rf "${TMP:-}"' EXIT
+    
     echo "Downloading aka for $target..."
     curl -fsSL "$url" -o "$TMP/aka.tar.gz"
 
