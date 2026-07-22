@@ -5,7 +5,7 @@ use std::path::PathBuf;
 pub fn store_path() -> Result<PathBuf> {
     let dir = dirs::config_dir()
         .context("Could not find config directory")?
-        .join("alias-mgr");
+        .join("aka");
     std::fs::create_dir_all(&dir)?;
     Ok(dir.join("aliases.json"))
 }

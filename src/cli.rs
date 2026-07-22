@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "alias-mgr", about = "Manage shell aliases for WSL and PowerShell")]
+#[command(name = "aka", about = "Manage shell aliases for WSL and PowerShell")]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,

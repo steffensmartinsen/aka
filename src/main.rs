@@ -18,6 +18,7 @@ fn main() -> Result<()> {
             store::save(&store)?;
             generator::generate(&store)?;
             println!("Added alias '{}'", name);
+            println!("Run 'source ~/.bashrc' to use it in this shell.");
         }
         Commands::Remove { name } => {
             if store.aliases.remove(&name).is_none() {
@@ -26,6 +27,7 @@ fn main() -> Result<()> {
             store::save(&store)?;
             generator::generate(&store)?;
             println!("Removed alias '{}'", name);
+            println!("Run 'source ~/.bashrc' to apply in this shell.");
         }
         Commands::List { search } => {
             let aliases: Vec<_> = store.aliases.iter()
