@@ -2,6 +2,7 @@ mod cli;
 mod generator;
 mod models;
 mod store;
+mod update;
 
 use anyhow::Result;
 use clap::Parser;
@@ -107,7 +108,10 @@ fn main() -> Result<()> {
             } else {
                 store::save(&store)?;
                 generator::generate(&store)?;
-                println!("Imported from {}: {} added, {} updated.", file, added, updated);
+                println!(
+                    "Imported from {}: {} added, {} updated.",
+                    file, added, updated
+                );
                 println!("Run 'source ~/.bashrc' to use them in this shell.");
             }
         }
@@ -115,6 +119,9 @@ fn main() -> Result<()> {
             let path = std::path::PathBuf::from(&file);
             store::save_to(&store, &path)?;
             println!("Exported {} alias(es) to {}", store.aliases.len(), file);
+        }
+        Commands::Update => {
+            update::run()?;
         }
     }
 

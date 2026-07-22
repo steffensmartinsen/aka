@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "aka", about = "Manage shell aliases for WSL and PowerShell")]
+#[command(name = "aka", version, about = "Manage shell aliases for WSL and PowerShell")]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
@@ -41,4 +41,6 @@ pub enum Commands {
         /// Path to write the profile JSON to
         file: String,
     },
+    /// Update aka to the latest release
+    Update,
 }

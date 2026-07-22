@@ -31,6 +31,7 @@ aka import my-aliases.json     # on the new one
   - [Regenerate](#regenerate)
   - [Export a profile](#export-a-profile)
   - [Import a profile](#import-a-profile)
+- [Updating](#updating)
 - [How it works](#how-it-works)
 - [Uninstall](#uninstall)
 - [License](#license)
@@ -164,6 +165,22 @@ source ~/.bashrc
 curl -fsSL https://raw.githubusercontent.com/steffensmartinsen/config/main/aka/profile.json -o profile.json
 aka import profile.json
 ```
+
+## Updating
+
+Check your installed version:
+
+​```bash
+aka --version
+​```
+
+Update to the latest release:
+
+​```bash
+aka update
+​```
+
+`aka update` checks the latest published release, and if a newer version exists, downloads and installs it over your current binary. If you're already on the latest (or ahead, during local development), it does nothing.
 
 ## How it works
 
