@@ -17,6 +17,24 @@ aka export my-aliases.json     # on your old machine
 aka import my-aliases.json     # on the new one
 ```
 
+## Contents
+
+- [Install](#install)
+  - [Prebuilt binary (recommended)](#prebuilt-binary-recommended)
+  - [Build from source](#build-from-source)
+  - [PATH note](#path-note)
+- [Shell setup](#shell-setup)
+- [Usage](#usage)
+  - [Add an alias](#add-an-alias)
+  - [Remove an alias](#remove-an-alias)
+  - [List aliases](#list-aliases)
+  - [Regenerate](#regenerate)
+  - [Export a profile](#export-a-profile)
+  - [Import a profile](#import-a-profile)
+- [How it works](#how-it-works)
+- [Uninstall](#uninstall)
+- [License](#license)
+
 ## Install
 
 ### Prebuilt binary (recommended)
@@ -138,6 +156,13 @@ After a successful import, reload your current shell to use the new aliases:
 
 ```bash
 source ~/.bashrc
+```
+
+**Want a starter set?** Download this [premade profile](https://github.com/steffensmartinsen/config/blob/main/aka/profile.json) and import it:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/steffensmartinsen/config/main/aka/profile.json -o profile.json
+aka import profile.json
 ```
 
 ## How it works
