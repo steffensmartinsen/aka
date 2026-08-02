@@ -6,6 +6,13 @@ main() {
     local INSTALL_DIR="$HOME/.local/bin"
     local BINARY_NAME="aka"
 
+    rc_file() {
+        case "$(basename "${SHELL:-}")" in
+            zsh) echo "$HOME/.zshrc" ;;
+            *)   echo "$HOME/.bashrc" ;;
+        esac
+    }
+
     # Detect platform → map to the release target triple
     local os arch target
     os="$(uname -s)"
@@ -42,15 +49,24 @@ main() {
 
     echo "Installed $BINARY_NAME to $INSTALL_DIR/$BINARY_NAME"
 
+    # Wire up shell integration automatically. Call by full path since
+    # INSTALL_DIR may not be on PATH yet in this session.
+    echo "Setting up shell integration..."
+    "$INSTALL_DIR/$BINARY_NAME" install || {
+        echo "Shell integration step failed — you can run 'aka install' manually later." >&2
+    }
+
     case ":$PATH:" in
         *":$INSTALL_DIR:"*)
-            echo "You can now run: aka --help"
+            echo "Done. Run 'aka --help' to get started."
             ;;
         *)
+            rc="$(rc_file)"
             echo ""
             echo "WARNING: $INSTALL_DIR is not on your PATH."
-            echo "Add to your ~/.bashrc (or ~/.zshrc on macOS):"
+            echo "Add this line to $rc:"
             echo "    export PATH=\"\$HOME/.local/bin:\$PATH\""
+            echo "Then restart your shell."
             ;;
     esac
 }

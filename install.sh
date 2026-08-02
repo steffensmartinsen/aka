@@ -6,6 +6,14 @@ set -euo pipefail
 INSTALL_DIR="$HOME/.local/bin"
 BINARY_NAME="aka"
 
+# Print the rc file for the user's shell — used only for the PATH hint.
+rc_file() {
+    case "$(basename "${SHELL:-}")" in
+        zsh) echo "$HOME/.zshrc" ;;
+        *)   echo "$HOME/.bashrc" ;;
+    esac
+}
+
 echo "Building release binary..."
 cargo build --release
 
@@ -21,12 +29,13 @@ case ":$PATH:" in
         echo "You can now run: aka --help"
         ;;
     *)
+        rc="$(rc_file)"
         echo ""
         echo "WARNING: $INSTALL_DIR is not on your PATH."
-        echo "Add this line to your ~/.bashrc (or ~/.zshrc on macOS):"
+        echo "Add this line to $rc:"
         echo ""
         echo "    export PATH=\"\$HOME/.local/bin:\$PATH\""
         echo ""
-        echo "Then run: source ~/.bashrc"
+        echo "Then restart your shell."
         ;;
 esac
