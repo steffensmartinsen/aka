@@ -1,8 +1,8 @@
 # aka
 
-*Also Known As* — a small command-line tool for managing bash aliases from a single source of truth.
+*Also Known As* — a small command-line tool for managing shell aliases from a single source of truth. Works with bash and zsh.
 
-Define your aliases once, and `aka` keeps a generated `aliases.sh` in sync that your shell sources on startup. No more hand-editing `.bashrc` every time you want a new shortcut.
+Define your aliases once, and `aka` keeps a generated `aliases.sh` in sync that your shell sources on startup. Eliminates having to hand-edit your shell's startup file every time you want a new shortcut. Supports profiles for quick access to preferred aliases when initializing a new server or setting up a new computer.
 
 ```bash
 aka add g "git status"
@@ -23,9 +23,9 @@ aka import my-aliases.json     # on the new one
   - [Prebuilt binary (recommended)](#prebuilt-binary-recommended)
   - [Build from source](#build-from-source)
   - [PATH note](#path-note)
-- [Shell setup](#shell-setup)
 - [Usage](#usage)
   - [Add an alias](#add-an-alias)
+  - [Shell integration](#shell-integration)
   - [Remove an alias](#remove-an-alias)
   - [List aliases](#list-aliases)
   - [Regenerate](#regenerate)
@@ -40,7 +40,7 @@ aka import my-aliases.json     # on the new one
 
 ### Prebuilt binary (recommended)
 
-No dependencies beyond `curl`. Downloads the right binary for your platform and installs it to `~/.local/bin`.
+No dependencies beyond `curl`. Downloads the right binary for your platform, installs it to `~/.local/bin`, and wires up shell integration automatically.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/steffensmartinsen/aka/master/remote-install.sh | bash
@@ -59,28 +59,18 @@ Requires [Rust](https://rustup.rs). Use this if you're on an unsupported platfor
 git clone https://github.com/steffensmartinsen/aka.git
 cd aka
 ./install.sh
+aka install     # wire up shell integration
 ```
 
 ### PATH note
 
-Both installers place the binary in `~/.local/bin`. This is on your `PATH` by default on most modern systems, but if the installer warns that it isn't, add this to your `~/.bashrc` (or `~/.zshrc` on macOS):
+Both installers place the binary in `~/.local/bin`. This is on your `PATH` by default on most modern systems, but if the installer warns that it isn't, add this to your shell's startup file (`~/.bashrc`, or `~/.zshrc` on macOS):
 
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-Then run `source ~/.bashrc`.
-
-## Shell setup
-
-For your aliases to load automatically in new shells, source the generated file from your `~/.bashrc`. Add this once:
-
-```bash
-echo '[ -f ~/.config/aka/aliases.sh ] && source ~/.config/aka/aliases.sh' >> ~/.bashrc
-source ~/.bashrc
-```
-
-The `[ -f ... ] &&` guard means nothing breaks if the file doesn't exist yet.
+Then restart your shell.
 
 ## Usage
 
@@ -98,10 +88,27 @@ aka add gp "git push" --description "push current branch"
 Adding an alias updates the store and regenerates `aliases.sh`. To use the new alias in your **current** shell, reload it:
 
 ```bash
-source ~/.bashrc
+source ~/.bashrc     # or ~/.zshrc
 ```
 
 New shells pick it up automatically.
+
+**Quoting note:** if a command contains a `$`, wrap it in **single** quotes so the variable is stored literally and expanded when the alias runs — not expanded by your shell at add-time:
+
+```bash
+aka add path 'echo $PATH'      # correct — stores: echo $PATH
+aka add path "echo $PATH"      # wrong — stores your current PATH, expanded now
+```
+
+### Shell integration
+
+The installer sets this up automatically. If you built from source or need to wire it up manually, run:
+
+```bash
+aka install
+```
+
+This adds a small block to your shell's startup file (`~/.zshrc`, `~/.bashrc`, or `~/.bash_profile` on macOS) that loads your aliases in new terminals. It picks the right file for your shell and platform, and it's idempotent — safe to run more than once.
 
 ### Remove an alias
 
@@ -156,7 +163,7 @@ By default, if an incoming alias name already exists locally, the import **abort
 After a successful import, reload your current shell to use the new aliases:
 
 ```bash
-source ~/.bashrc
+source ~/.bashrc     # or ~/.zshrc
 ```
 
 **Want a starter set?** Download this [premade profile](https://github.com/steffensmartinsen/config/blob/main/aka/profile.json) and import it:
@@ -170,40 +177,39 @@ aka import profile.json
 
 Check your installed version:
 
-​```bash
+```bash
 aka --version
-​```
+```
 
 Update to the latest release:
 
-​```bash
+```bash
 aka update
-​```
+```
 
 `aka update` checks the latest published release, and if a newer version exists, downloads and installs it over your current binary. If you're already on the latest (or ahead, during local development), it does nothing.
 
 ## How it works
 
-`aka` stores your aliases as JSON at `~/.config/aka/aliases.json` and generates a bash script alongside it:
+`aka` stores your aliases as JSON at `~/.config/aka/aliases.json` and generates a shell script alongside it:
 
 ```
 ~/.config/aka/
 ├── aliases.json   # source of truth (edit via aka, not by hand)
-└── aliases.sh     # generated — sourced by your ~/.bashrc
+└── aliases.sh     # generated — sourced by your shell's startup file
 ```
 
-Every `add` or `remove` rewrites `aliases.sh`. Your shell reads that generated file, so your aliases live in one place and stay in sync.
+Every `add` or `remove` rewrites `aliases.sh`. Your shell reads that generated file, so your aliases live in one place and stay in sync. Alias syntax is identical in bash and zsh, so the same generated file works for both.
 
 A **profile** (from `aka export`) is just a copy of this store's JSON structure, so it's portable and safe to commit to a dotfiles repo. `aka import` reads one back in.
 
 ## Uninstall
 
 ```bash
-rm ~/.local/bin/aka        # the binary
-rm -rf ~/.config/aka       # aliases and generated files
+aka uninstall
 ```
 
-Optionally remove the source line from your `~/.bashrc`.
+Removes the shell integration block from your startup file, the `~/.config/aka` directory, and the binary itself.
 
 ## License
 
