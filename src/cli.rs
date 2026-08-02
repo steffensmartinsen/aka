@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "aka", version, about = "Manage shell aliases for WSL and PowerShell")]
+#[command(name = "aka", version, about = "Manage shell aliases for Unix based terminals")]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
@@ -43,4 +43,20 @@ pub enum Commands {
     },
     /// Update aka to the latest release
     Update,
+    /// Install aka's shell integration into your shell's rc file
+    Install {
+        /// Force a shell instead of auto-detecting
+        #[arg(long)]
+        shell: Option<String>,
+        /// Show what would change without writing
+        #[arg(long)]
+        dry_run: bool,
+    },
+    /// Remove aka completely: shell integration, config, and binary
+    Uninstall {
+        #[arg(long)]
+        shell: Option<String>,
+        #[arg(long)]
+        dry_run: bool,
+    },
 }
